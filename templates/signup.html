@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <style>
+      body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at 60% 40%, #232526 0%, #414345 60%, #232526 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(30, 32, 34, 0.98);
+    border-radius: 28px;
+    box-shadow: 0 16px 48px rgba(44, 62, 80, 0.28), 0 2px 12px rgba(160, 160, 160, 0.12);
+    width: 100%;
+    max-width: 420px;
+    padding: 54px 38px 38px 38px;
+    text-align: center;
+    backdrop-filter: blur(3px);
+    transition: box-shadow 0.2s;
+}
+
+.container:hover {
+    box-shadow: 0 24px 64px rgba(44, 62, 80, 0.32), 0 4px 16px rgba(160, 160, 160, 0.16);
+}
+
+h2 {
+    margin-bottom: 32px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    font-size: 2.1rem;
+    text-shadow: 0 2px 8px rgba(44,62,80,0.18);
+}
+
+.input-box {
+    margin: 20px 20px;
+    text-align: left;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #444;
+    border-radius: 14px;
+    font-size: 16px;
+    outline: none;
+    background: #232526;
+    color: #fff;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(44,62,80,0.09);
+}
+
+.input-box input:focus {
+    border: 1.5px solid #ff512f;
+    box-shadow: 0 2px 8px rgba(255,81,47,0.18);
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+    color: #fff;
+    font-weight: 700;
+    margin-top: 28px;
+    box-shadow: 0 2px 12px rgba(255,81,47,0.18);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #dd2476 0%, #ff512f 100%);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(221,36,118,0.22);
+}
+
+.error {
+    color: #ff4444;
+    font-size: 14px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.messages {
+    color: #ff4444;
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+p {
+    margin-top: 22px;
+    font-size: 15px;
+    color: #bdbdbd;
+}
+
+a {
+    color: #ff512f;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #dd2476;
+    text-decoration: underline;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+    color: #ff4444;
+    font-size: 14px;
+}
+
+@media (max-width: 500px) {
+    .container {
+        padding: 28px 8px;
+        max-width: 98vw;
+    }
+    h2 {
+        font-size: 1.3rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form method="POST">
+    <div class="input-box">
+        <input type="text" name="email" placeholder="Email">
+        {% if email_error %}
+            <p class="error">{{ email_error }}</p>
+        {% endif %}
+    </div>
+
+    <div class="input-box">
+        <input type="text" name="username" placeholder="Username">
+        {% if username_error %}
+            <p class="error">{{ username_error }}</p>
+        {% endif %}
+    </div>
+
+    <div class="input-box">
+        <input type="password" name="password" placeholder="Password">
+        {% if password_error %}
+            <p class="error">{{ password_error }}</p>
+        {% endif %}
+    </div>
+
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>Already have an account? <a href="/">Login</a></p>
+
+
+
+
+
+
+
+
+        <!--
+        <form method="POST">
+            <input type="text" name="email" placeholder="Email" required><br>
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="/">Login</a></p>
+        -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

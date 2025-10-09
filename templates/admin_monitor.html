@@ -1,0 +1,268 @@
+<div id="monitor" class="section">
+  <div class="card">
+    <h2>System Monitoring</h2>
+    
+    <!-- Performance Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h4>Avg Processing Time</h4>
+        <p class="metric-value">{{ avg_processing_time | default('0.0') }}s</p>
+      </div>
+      <div class="metric-card">
+        <h4>Success Rate</h4>
+        <p class="metric-value">{{ success_rate | default('100') }}%</p>
+      </div>
+      <div class="metric-card">
+        <h4>Storage Used</h4>
+        <p class="metric-value">{{ storage_used | default('0') }} MB</p>
+      </div>
+      <div class="metric-card">
+        <h4>Active Models</h4>
+        <p class="metric-value">{{ active_models | default('2') }}</p>
+      </div>
+    </div>
+
+    <!-- Model Accuracy Check -->
+    <div class="model-accuracy-section">
+      <h3>Model Accuracy Check</h3>
+      <div class="sample-review">
+        <strong>Sample Review:</strong> 
+        <p>"The battery life is amazing but the camera quality could be better"</p>
+      </div>
+      <div class="prediction-feedback">
+        <div class="prediction">
+          <strong>Predicted Aspects & Sentiment:</strong>
+          <ul>
+            <li>Battery: <span class="sentiment-positive">Positive</span></li>
+            <li>Camera: <span class="sentiment-negative">Negative</span></li>
+          </ul>
+        </div>
+        <div class="feedback">
+          <strong>Your Feedback:</strong>
+          <div class="feedback-buttons">
+            <button onclick="submitFeedback('correct')" class="btn-correct">✅ Correct</button>
+            <button onclick="submitFeedback('incorrect')" class="btn-incorrect">❌ Incorrect</button>
+            <button onclick="submitFeedback('partial')" class="btn-partial">⚠️ Partial</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Logs -->
+    <div class="logs-section">
+      <h3>Processing Logs</h3>
+      {% if logs %}
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Dataset</th>
+              <th>Reviews Count</th>
+              <th>Processing Time</th>
+              <th>Status</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr class="log-row status-{{ log.status }}">
+              <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+              <td>{{ log.dataset_name or '-' }}</td>
+              <td>{{ log.reviews_count or '-' }}</td>
+              <td>{{ log.processing_time or '-' }}s</td>
+              <td>
+                <span class="status-badge status-{{ log.status }}">
+                  {{ log.status }}
+                </span>
+              </td>
+              <td>{{ log.message or '' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="no-logs">No logs available.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.metric-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.metric-card h4 {
+  margin: 0 0 10px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.metric-value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.model-accuracy-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.sample-review {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.sample-review p {
+  margin: 10px 0;
+  font-style: italic;
+}
+
+.prediction-feedback {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.prediction ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.sentiment-positive {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.sentiment-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.feedback-buttons {
+  margin-top: 10px;
+}
+
+.btn-correct, .btn-incorrect, .btn-partial {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-correct {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-incorrect {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-partial {
+  background: #f59e0b;
+  color: white;
+}
+
+.logs-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.logs-table th {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.logs-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.log-row:hover {
+  background: #f8fafc;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.no-logs {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px;
+}
+</style>
+
+<script>
+function submitFeedback(feedback) {
+  fetch('{{ url_for("admin_model_feedback") }}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      feedback: feedback,
+      review: "The battery life is amazing but the camera quality could be better",
+      predicted_sentiment: {battery: "positive", camera: "negative"}
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Thank you for your feedback! Model accuracy will be improved.');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error submitting feedback');
+  });
+}
+</script>

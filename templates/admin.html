@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="card">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, {{ current_user.username if current_user else 'Admin' }}!</p>
+
+        <!-- Summary Cards -->
+        <div class="stats-overview">
+            <div class="stat-item">
+                <span class="stat-label">Total Users</span>
+                <span class="stat-value">{{ total_users }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Datasets</span>
+                <span class="stat-value">{{ total_datasets }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Reviews</span>
+                <span class="stat-value">{{ total_reviews }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Active Users (Today)</span>
+                <span class="stat-value">{{ active_users_today }}</span>
+            </div>
+        </div>
+
+        <!-- Recent Activity Log -->
+        <div style="margin-top: 30px;">
+            <h3>Recent Activity</h3>
+            {% if recent_activities %}
+            <ul class="activity-log">
+                {% for activity in recent_activities %}
+                <li>{{ activity.message }} - {{ activity.timestamp }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No recent activity</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

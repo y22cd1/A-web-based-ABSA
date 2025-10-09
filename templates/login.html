@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at 60% 40%, #232526 0%, #414345 60%, #232526 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(30, 32, 34, 0.98);
+    border-radius: 28px;
+    box-shadow: 0 16px 48px rgba(44, 62, 80, 0.28), 0 2px 12px rgba(160, 160, 160, 0.12);
+    width: 100%;
+    max-width: 420px;
+    padding: 54px 38px 38px 38px;
+    text-align: center;
+    backdrop-filter: blur(3px);
+    transition: box-shadow 0.2s;
+}
+
+.container:hover {
+    box-shadow: 0 24px 64px rgba(44, 62, 80, 0.32), 0 4px 16px rgba(160, 160, 160, 0.16);
+}
+
+h2 {
+    margin-bottom: 32px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    font-size: 2.1rem;
+    text-shadow: 0 2px 8px rgba(44,62,80,0.18);
+}
+
+.input-box {
+    margin: 20px 20px;
+    text-align: left;
+}
+
+.input-box label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 15px;
+    color: #bdbdbd;
+    font-weight: 500;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #444;
+    border-radius: 14px;
+    font-size: 16px;
+    outline: none;
+    background: #232526;
+    color: #fff;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(44,62,80,0.09);
+}
+
+.input-box input:focus {
+    border: 1.5px solid #ff512f;
+    box-shadow: 0 2px 8px rgba(255,81,47,0.18);
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+    color: #fff;
+    font-weight: 700;
+    margin-top: 28px;
+    box-shadow: 0 2px 12px rgba(255,81,47,0.18);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #dd2476 0%, #ff512f 100%);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(221,36,118,0.22);
+}
+
+.error {
+    color: #ff4444;
+    font-size: 14px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.messages {
+    color: #ff4444;
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+p {
+    margin-top: 22px;
+    font-size: 15px;
+    color:whitesmoke;
+}
+
+a {
+    color: #ff512f;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #dd2476;
+    text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+    .container {
+        padding: 28px 8px;
+        max-width: 98vw;
+    }
+    h2 {
+        font-size: 1.3rem;
+    }
+}
+ </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h2>Login</h2>
+
+
+
+
+        <form method="POST">
+    <div class="input-box">
+        <label for="identifier">Username or Email</label>
+        <input type="text" name="identifier" id="identifier" placeholder="Enter username or email">
+        {% if username_error %}
+            <p class="error">{{ username_error }}</p>
+        {% endif %}
+    </div>
+
+    <div class="input-box">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter password">
+        {% if password_error %}
+            <p class="error">{{ password_error }}</p>
+        {% endif %}
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+
+       <!--
+        <form method="POST">
+            <div class="input-box">
+                <input type="text" name="identifier" placeholder="Username or Email" required>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+ -->
+        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+ 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
+ 
+  <script>
+    let isLogin = true;
+ 
+    function toggleForm() {
+      const title = document.getElementById("form-title");
+      const submitBtn = document.getElementById("submit-btn");
+      const toggleText = document.getElementById("toggle-text");
+ 
+      // Login fields
+      const loginUsername = document.getElementById("login-username-box");
+      const loginPassword = document.getElementById("login-password-box");
+ 
+      // Signup fields
+      const signupName = document.getElementById("signup-name-box");
+      const signupEmail = document.getElementById("signup-email-box");
+      const signupPass = document.getElementById("signup-password-box");
+      const signupConfirm = document.getElementById("signup-confirm-box");
+ 
+      if (isLogin) {
+        // Switch to Sign Up
+        title.innerText = "Create Account";
+        submitBtn.innerText = "Sign Up";
+        toggleText.innerHTML = 'Already have an account? <a onclick="toggleForm()">Login</a>';
+ 
+        loginUsername.style.display = "none";
+        loginPassword.style.display = "none";
+ 
+        signupName.style.display = "block";
+        signupEmail.style.display = "block";
+        signupPass.style.display = "block";
+        signupConfirm.style.display = "block";
+ 
+        isLogin = false;
+      } else {
+        // Switch to Login
+        title.innerText = "Login";
+        submitBtn.innerText = "Login";
+        toggleText.innerHTML = 'Don\'t have an account? <a onclick="toggleForm()">Sign Up</a>';
+ 
+        loginUsername.style.display = "block";
+        loginPassword.style.display = "block";
+ 
+        signupName.style.display = "none";
+        signupEmail.style.display = "none";
+        signupPass.style.display = "none";
+        signupConfirm.style.display = "none";
+ 
+        isLogin = true;
+      }
+    }
+ 
+    document.getElementById("submit-btn").addEventListener("click", function() {
+      if (isLogin) {
+        alert("Logged in successfully (demo)!");
+      } else {
+        const pass = document.getElementById("signup-password").value;
+        const confirm = document.getElementById("confirm-password").value;
+ 
+        if (pass !== confirm) {
+          alert("Passwords do not match!");
+        } else {
+          alert("Account created successfully (demo)!");
+        }
+      }
+    });
+  </script>
+</body>
+</html>

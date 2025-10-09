@@ -1,0 +1,176 @@
+<style>
+    *{
+        margin: 0%;
+        padding: 0%;
+    }
+     /* Card Styles */
+    .card {
+      background: white;
+      padding: 30px;
+      margin-bottom: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+    
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2:before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--gray-light);
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      background: white;
+    }
+
+    table th, table td { 
+      padding: 16px 20px; 
+      text-align: left; 
+      font-size: 14px; 
+      border-bottom: 1px solid var(--gray-light);
+    }
+
+    table th { 
+      background: #f8fafc; 
+      font-weight: 600; 
+      color: var(--dark); 
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+    }
+
+    table tr:hover { 
+      background: #f8fafc; 
+    }
+
+    table tr:last-child td {
+      border-bottom: none;
+    }
+
+
+
+ .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color:black;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover { 
+      background: var(--primary-dark); 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 12px rgba(239, 71, 111, 0.3);
+    }
+
+    .btn-warning {
+      background: var(--warning);
+      color: #333;
+    }
+
+    .btn-warning:hover {
+      background: #fbbf24;
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+
+    .flash-messages { margin-bottom: 20px; }
+    .alert { 
+      padding: 14px 18px; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      margin-bottom: 10px; 
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+</style>
+<div class="card p-4">
+    <h2>User Details</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <td>{{ user.id }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>Role</th>
+            <td>{{ user.role }}</td>
+        </tr>
+        <tr>
+            <th>Created At</th>
+            <td>{{ user.created_at }}</td>
+        </tr>
+    </table>
+
+    <a href="{{ url_for('admin') }}" class=" btn-primary">Back to Users</a>
+    <a href="{{ url_for('dashboard') }}" class="btn-primary">Back to Dashboard</a>
+</div>
+

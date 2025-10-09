@@ -1,0 +1,92 @@
+<div class="card">
+    <div class="card-header">
+        <h2>User Reviews</h2>
+        <div class="stats-overview">
+            <div class="stat-item">
+                <span class="stat-label">Total Reviews</span>
+                <span class="stat-value">{{ reviews|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Positive</span>
+                <span class="stat-value positive">{{ positive }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Negative</span>
+                <span class="stat-value negative">{{ negative }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Neutral</span>
+                <span class="stat-value neutral">{{ neutral }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if reviews %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Review & Aspects</th>
+                    <th>VADER Sentiment</th>
+                    <th>VADER Confidence</th>
+                    <th>HF Sentiment</th>
+                    <th>HF Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review, user in reviews %}
+                <tr>
+                    <td class="user-info">
+                        <div class="username">{{ user.username }}</div>
+                    </td>
+                    <td class="email">{{ user.email }}</td>
+                    <td class="review-content">
+                        <div class="review-text">{{ review.highlighted_content | safe }}</div>
+                        {% if review.aspect_sentiments and review.aspect_sentiments.aspects %}
+                        <div class="aspects-list">
+                            {% for aspect, sentiment in review.aspect_sentiments.aspects.items() %}
+                            <span class="aspect-tag {{ sentiment }}">
+                                {{ aspect }}: {{ sentiment|capitalize }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="sentiment {{ review.sentiment }}">
+                            {{ review.sentiment | capitalize }}
+                        </span>
+                    </td>
+                    <td class="confidence">
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: {{ review.confidence }}%"></div>
+                            <span class="confidence-text">{{ review.confidence }}%</span>
+                        </div>
+                    </td>
+                    <td class="hf-sentiment">
+                        {% if review.aspect_sentiments %}
+                            {{ review.aspect_sentiments["huggingface_label"] }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="hf-score">
+                        {% if review.aspect_sentiments %}
+                            {{ review.aspect_sentiments["huggingface_score"] }}%
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="no-reviews">
+        <p>📝 No reviews submitted yet.</p>
+    </div>
+    {% endif %}
+</div>

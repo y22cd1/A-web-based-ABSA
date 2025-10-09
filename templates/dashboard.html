@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at 60% 40%, #232526 0%, #414345 60%, #232526 100%);
+      color: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 30px;
+    }
+    
+    h1 {
+      color: #fff;
+      margin-bottom: 60px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 3rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 35px;
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 70px;
+    }
+    
+    .card-stat {
+      background: #fff;
+      padding: 45px 35px;
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card-stat:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    
+    .card-stat h2 {
+      font-size: 4rem;
+      color: #1e293b;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .card-stat p {
+      font-size: 1.4rem;
+      color: #64748b;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .stat-card {
+      background: #fff;
+      padding: 45px 35px;
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    
+    .stat-number {
+      font-size: 4rem;
+      color: #1e293b;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .stat-label {
+      font-size: 1.4rem;
+      color: #64748b;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .button-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .button {
+      background: #1d4ed8;
+      color: #fff;
+      padding: 22px 40px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(29, 78, 216, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .button:hover {
+      background: #2563eb;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(29, 78, 216, 0.4);
+      color: #fff;
+    }
+    
+    /* Additional spacing for better layout */
+    .content-spacer {
+      margin: 40px 0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 40px 20px;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 40px;
+      }
+      
+      .stats-grid {
+        gap: 25px;
+        margin-bottom: 50px;
+      }
+      
+      .card-stat, .stat-card {
+        padding: 35px 25px;
+      }
+      
+      .card-stat h2, .stat-number {
+        font-size: 3rem;
+      }
+      
+      .card-stat p, .stat-label {
+        font-size: 1.2rem;
+      }
+      
+      .button {
+        padding: 20px 30px;
+        font-size: 1.1rem;
+      }
+      
+      .button-grid {
+        gap: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .card-stat h2, .stat-number {
+        font-size: 2.5rem;
+      }
+      
+      .button-grid {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .button {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome, {{ current_user.username }}! 👋</h1>
+
+  <!-- Stats Section -->
+  <div class="stats-grid">
+    <div class="card-stat">
+      <h2>{{ datasets_uploaded or 0 }}</h2>
+      <p>Datasets Uploaded</p>
+    </div>
+    <div class="card-stat">
+      <h2>{{ reviews_posted or 0 }}</h2>
+      <p>Reviews Posted</p>
+    </div>
+    <div class="card-stat">
+      <h2>{{ reviews_analyzed or 0 }}</h2>
+      <p>Reviews Analyzed</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ positive_reviews or 0 }}</div>
+      <div class="stat-label">Positive Reviews</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ negative_reviews or 0 }}</div>
+      <div class="stat-label">Negative Reviews</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ neutral_reviews or 0 }}</div>
+      <div class="stat-label">Neutral Reviews</div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="button-grid">
+    <a class="button" href="{{ url_for('review') }}">
+      <span style="font-size: 1.5rem;">✍️</span> Write Review
+    </a>
+    <a class="button" href="{{ url_for('insights') }}">
+      <span style="font-size: 1.5rem;">📊</span> View Insights
+    </a>
+    <a class="button" href="{{ url_for('profile') }}">
+      <span style="font-size: 1.5rem;">⚙️</span> Settings
+    </a>
+    <a class="button" href="{{ url_for('logout') }}">
+      <span style="font-size: 1.5rem;">🚪</span> Logout
+    </a>
+  </div>
+
+  <!-- Additional motivational section to fill space -->
+  <div style="text-align: center; margin-top: 40px;">
+    <p style="font-size: 1.4rem; color: #d1d5db; max-width: 600px; line-height: 1.6;">
+      {% if reviews_posted and reviews_posted > 0 %}
+        🎉 Great work! You've analyzed {{ reviews_analyzed or 0 }} reviews with 
+        {{ positive_reviews or 0 }} positive sentiments. Keep exploring insights!
+      {% else %}
+        🚀 Start your sentiment analysis journey by writing your first review!
+      {% endif %}
+    </p>
+  </div>
+</body>
+</html>

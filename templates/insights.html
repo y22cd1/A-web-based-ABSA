@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Insights</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family: "Poppins", sans-serif; background: radial-gradient(circle at 60% 40%, #232526 0%, #414345 60%, #232526 100%); min-height:100vh; color:#f3f4f6; display:flex; flex-direction:column; align-items:center; padding:40px 20px;}
+    h1 { text-align:center; margin-bottom:30px; font-size:2.2rem; font-weight:700; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.35);}
+    .card { background: rgba(30,32,34,0.95); border-radius:22px; box-shadow:0 16px 48px rgba(0,0,0,0.3), 0 2px 12px rgba(0,0,0,0.15); backdrop-filter:blur(4px); padding:24px 28px; margin-bottom:28px; width:100%; max-width:720px; transition:box-shadow 0.2s;}
+    .card:hover { box-shadow:0 20px 58px rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.18);}
+    .summary p { margin:10px 0; font-size:1rem; color:#e5e7eb;}
+    ul { list-style:none; padding:0; margin:0;}
+    li { background: rgba(45,47,49,0.95); margin:14px 0; padding:16px; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,0.22); transition: transform 0.2s ease, box-shadow 0.2s ease;}
+    li:hover { transform: translateY(-3px); box-shadow:0 6px 18px rgba(0,0,0,0.35);}
+    .sentiment { font-weight:600; padding:6px 12px; border-radius:8px; font-size:0.9rem; display:inline-block; margin-top:6px;}
+    .positive { background:#16a34a; color:#dcfce7; }
+    .negative { background:#b91c1c; color:#fee2e2; }
+    .neutral  { background:#92400e; color:#fef3c7; }
+    .highlight-positive { background: rgba(34,197,94,0.25); padding:2px 6px; border-radius:6px; }
+    .highlight-negative { background: rgba(239,68,68,0.25); padding:2px 6px; border-radius:6px; }
+    .highlight-neutral  { background: rgba(245,158,11,0.25); padding:2px 6px; border-radius:6px; }
+    #chartContainer { background: rgba(30,32,34,0.95); border-radius:22px; box-shadow:0 16px 48px rgba(0,0,0,0.3),0 2px 12px rgba(0,0,0,0.15); backdrop-filter:blur(4px); padding:28px; width:100%; max-width:520px; margin:40px auto; transition:box-shadow 0.2s;}
+    #chartContainer:hover { box-shadow:0 20px 58px rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.18);}
+   /* a { display:block; text-align:center; margin-top:20px; text-decoration:none; font-weight:600; color:#ff512f; transition:color 0.2s;}
+    a:hover { color:#dd2476; text-decoration:underline;}*/
+    /* Back Button */
+    .btn-back {
+      display: block;
+      width: 200px;
+      text-align: center;
+      margin: 40px auto 0;
+      background: linear-gradient(90deg, #64748b 0%, #475569 100%);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 0;
+      border-radius: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(100,116,139,0.25);
+      transition: 0.3s;
+    }
+    .btn-back:hover {
+      background: linear-gradient(90deg, #475569 0%, #64748b 100%);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Insights</h1>
+
+  <div class="card summary">
+    <p><strong>Total Reviews:</strong> {{ total_reviews }}</p>
+    <p><strong>Positive:</strong> {{ positive }} | <strong>Negative:</strong> {{ negative }} | <strong>Neutral:</strong> {{ neutral }}</p>
+  </div>
+
+  {% if reviews %}
+    <div class="card">
+      <ul>
+        {% for review in reviews %}
+          <li>
+            <strong>Review:</strong> {{ review.highlighted_content | safe }} <br>
+            <strong>Sentiment:</strong> 
+            <span class="sentiment {{ review.sentiment }}">
+              {{ review.sentiment|capitalize }}
+            </span> (Confidence: {{ "%.2f"|format(review.confidence) }}%)
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="card">
+      <p style="text-align:center;">No reviews yet.</p>
+    </div>
+  {% endif %}
+
+  <div id="chartContainer">
+    <canvas id="insightsChart"></canvas>
+  </div>
+
+  <a href="{{ url_for('dashboard') }}" class="btn-back">⬅ Back to Dashboard</a>
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('insightsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Positive','Negative','Neutral'],
+          datasets: [{
+            data: [{{ positive }}, {{ negative }}, {{ neutral }}],
+            backgroundColor: ['#22c55e','#ef4444','#f59e0b'],
+            borderColor:'#111827',
+            borderWidth:2
+          }]
+        },
+        options: {
+          responsive:true,
+          plugins:{
+            title:{ display:true, text:'Sentiment Distribution', color:'#f3f4f6', font:{ size:18, weight:"bold" } },
+            legend:{ position:'bottom', labels:{ color:'#e5e7eb', font:{ size:14 } } }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<div class="card">
+    <h2>Analytics</h2>
+    <div style="width: 280px; height: 280px; margin: 0 auto;">
+        <canvas id="sentimentChart"></canvas>
+    </div>
+    <div class="analysis-summary">
+        <h3>📊 Analysis Summary</h3>
+        <ul>
+            <li><span>📝 <strong>Total Reviews</strong></span><span>{{ positive + negative + neutral }}</span></li>
+            <li><span>✅ <strong>Positive Reviews</strong></span><span class="positive">{{ positive }}</span></li>
+            <li><span>❌ <strong>Negative Reviews</strong></span><span class="negative">{{ negative }}</span></li>
+            <li><span>➖ <strong>Neutral Reviews</strong></span><span class="neutral">{{ neutral }}</span></li>
+            <li><span>🎯 <strong>Avg Confidence</strong></span><span class="avg">{{ avg_confidence }}%</span></li>
+        </ul>
+        {% if aspect_summary %}
+        <h3>📝 Aspect Summary</h3>
+        <ul>
+            {% for aspect, counts in aspect_summary.items() %}
+            <li>{{ aspect }}: <span class="positive">+{{ counts.positive }}</span> | <span class="negative">-{{ counts.negative }}</span> | <span class="neutral">~{{ counts.neutral }}</span></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>

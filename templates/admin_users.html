@@ -1,0 +1,38 @@
+<div class="card">
+    <h2>Users</h2>
+    {% if users %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>  {# Changed from user.id to loop.index #}
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime("%Y-%m-%d") }}</td>
+                    <td>{% if user.is_admin %}Admin{% else %}User{% endif %}</td>
+                    <td>
+                        <a href="{{ url_for('admin_view_user', user_id=user.id) }}" class="update-btn" style="padding: 6px 12px; font-size: 12px;">View</a>
+                        <form method="post" action="{{ url_for('admin_delete_user', user_id=user.id) }}" style="display:inline;">
+                            <button type="submit" onclick="return confirm('Delete user and all their data?')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No users found.</p>
+    {% endif %}
+</div>
