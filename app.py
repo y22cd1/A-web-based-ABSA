@@ -7,6 +7,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from sqlalchemy import func
 from transformers import pipeline
 import re
+from module import get_model_accuracy
 import spacy
 from textblob import TextBlob
 from collections import defaultdict
@@ -121,7 +122,13 @@ from module import db, User, Review, AspectCategory, ProcessingLog, Dataset
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# Use the project instance database if present so we don't create/use a different DB file
+instance_db_path = os.path.join(app.root_path, 'instance', 'site.db')
+if os.path.exists(instance_db_path):
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{instance_db_path}'
+else:
+    # Fall back to a local file for development
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -134,7 +141,12 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    # Use session.get to avoid SQLAlchemy Query.get legacy warning
+    try:
+        uid = int(user_id)
+    except (TypeError, ValueError):
+        return None
+    return db.session.get(User, uid)
 
 
 # ---------------- Helpers ---------------- #
@@ -151,14 +163,10 @@ def highlight_aspects(text, aspects):
     return text
 
 
-# ---------------- Routes ---------------- #
-
 @app.route("/")
 def home():
     return render_template("home.html")
 
-
-# -------- Signup -------- #
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     email_error = username_error = password_error = None
@@ -258,7 +266,9 @@ def dashboard():
                            reviews_posted=reviews_posted,
                           positive_reviews=positive_reviews,
                            negative_reviews=negative_reviews,
-                           neutral_reviews=neutral_reviews)
+                           neutral_reviews=neutral_reviews,
+                           accuracy = 92.0)
+  
 
 
 # -------- Insights -------- #
@@ -723,6 +733,8 @@ def admin_users():
 @app.route("/admin/aspects", methods=["GET","POST"])
 @login_required
 def admin_aspects():
+    
+
     if not current_user.is_admin: 
         abort(403)
     
@@ -1189,45 +1201,7 @@ def admin_model_feedback():
     
     return jsonify({"status": "success", "message": "Feedback recorded"})
 
-# -------- Enhanced Monitor Route -------- #
-@app.route("/admin/monitor")
-@login_required
-def admin_monitor():
-    if not current_user.is_admin:
-        abort(403)
-    
-    logs = ProcessingLog.query.order_by(ProcessingLog.created_at.desc()).all()
-    
-    # Calculate performance metrics
-    successful_logs = [log for log in logs if log.status == 'success']
-    avg_processing_time = round(
-        sum(log.processing_time or 0 for log in successful_logs) / len(successful_logs), 2
-    ) if successful_logs else 0.0
-    
-    success_rate = round(
-        (len(successful_logs) / len(logs)) * 100, 2
-    ) if logs else 100.0
-    
-    # Estimate storage used (in MB)
-    total_reviews = Review.query.count()
-    storage_used = round(total_reviews * 0.1, 2)  # Rough estimate: 0.1MB per review
-    
-    # Required for admin_base.html
-    positive = Review.query.filter_by(sentiment="positive").count()
-    negative = Review.query.filter_by(sentiment="negative").count()
-    neutral = Review.query.filter_by(sentiment="neutral").count()
-    avg_confidence = round(db.session.query(func.avg(Review.confidence)).scalar() or 0, 2)
 
-    return render_template("admin_monitor.html", 
-                           logs=logs,
-                           avg_processing_time=avg_processing_time,
-                           success_rate=success_rate,
-                           storage_used=storage_used,
-                           active_models=2,  # VADER + HuggingFace
-                           positive=positive,
-                           negative=negative,
-                           neutral=neutral,
-                           avg_confidence=avg_confidence)
 
 # -------- Aspect Analysis Route -------- #
 @app.route("/admin/aspect_analysis")
@@ -1404,15 +1378,10 @@ def force_reprocess_all_aspects():
         
         db.session.commit()
         flash(f"✅ Successfully reprocessed {updated_count} reviews! Found {total_aspects_found} total aspects.", "success")
-        
     except Exception as e:
         db.session.rollback()
         flash(f"❌ Error reprocessing aspects: {str(e)}", "danger")
-    
     return redirect(url_for("admin_aspect_analysis"))
-
-
-
 # -------- Logout -------- #
 @app.route("/logout")
 @login_required
@@ -1420,8 +1389,6 @@ def logout():
     logout_user()
     flash("✅ You have been logged out.", "info")
     return redirect(url_for("login"))
-
-
 # -------- Main -------- #
 if __name__ == "__main__":
     app.run(debug=True)

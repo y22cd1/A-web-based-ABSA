@@ -748,18 +748,12 @@
         <i class="fas fa-users"></i>
         <span>Users</span>
       </div>
-      <div class="menu-item" data-section="aspects">
-        <i class="fas fa-tags"></i>
-        <span>Aspects</span>
-      </div>
+
       <div class="menu-item" data-section="aspectsanalysis">
         <i class="fas fa-chart-pie"></i>
         <span>Aspect Analysis</span>
       </div>
-      <div class="menu-item" data-section="monitor">
-        <i class="fas fa-desktop"></i>
-        <span>Monitor</span>
-      </div>
+      
       <div class="menu-item" data-section="reports">
         <i class="fas fa-file-alt"></i>
         <span>Reports</span>
@@ -1190,73 +1184,49 @@
       </div>
     </div>
 
-    <!-- Monitor Section -->
-    <div id="monitor" class="section">
-      <div class="card">
-        <h2><i class="fas fa-desktop"></i> System Monitoring</h2>
-        
-        <!-- Performance Metrics -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <h4>Avg Processing Time</h4>
-            <p class="metric-value">{{ avg_processing_time | default('0.0') }}s</p>
+    
+        <!-- Reviews Awaiting Validation -->
+        <div style="margin-top: 30px;">
+          <h3><i class="fas fa-check-circle"></i> Reviews Awaiting Validation</h3>
+          {% if awaiting_validation %}
+          <div style="max-height: 400px; overflow-y: auto;">
+            {% for review in awaiting_validation %}
+            <div style="padding: 15px; margin-bottom: 10px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3b82f6;">
+              <div style="display: flex; justify-content: space-between; align-items: start; gap: 15px;">
+                <div style="flex: 1;">
+                  <p style="margin: 0 0 8px 0; color: var(--dark); font-weight: 600;">{{ review.user.username }}</p>
+                  <p style="margin: 0 0 10px 0; color: var(--gray); font-size: 14px;">{{ review.content[:150] }}...</p>
+                  <div style="display: flex; gap: 10px; align-items: center;">
+                    <span>Predicted:</span>
+                    <span class="sentiment {{ review.sentiment }}">{{ review.sentiment | capitalize }}</span>
+                    <span style="color: var(--gray); font-size: 12px;">({{ review.confidence or 0 }}% confidence)</span>
+                  </div>
+                </div>
+                <form method="post" action="{{ url_for('validate_sentiment', review_id=review.id) }}" style="display: flex; gap: 5px;">
+                  <select name="actual_sentiment" required style="padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
+                    <option value="">Select actual sentiment</option>
+                    <option value="positive">Positive</option>
+                    <option value="negative">Negative</option>
+                    <option value="neutral">Neutral</option>
+                  </select>
+                  <button type="submit" class="btn" style="padding: 8px 16px; font-size: 14px; white-space: nowrap;">
+                    <i class="fas fa-check"></i> Validate
+                  </button>
+                </form>
+              </div>
+            </div>
+            {% endfor %}
           </div>
-          <div class="metric-card">
-            <h4>Success Rate</h4>
-            <p class="metric-value">{{ success_rate | default('100') }}%</p>
+          {% else %}
+          <div class="no-reviews">
+            <i class="fas fa-check-double" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+            <p>All reviews have been validated! Great job keeping the model accurate.</p>
           </div>
-          <div class="metric-card">
-            <h4>Storage Used</h4>
-            <p class="metric-value">{{ storage_used | default('0') }} MB</p>
-          </div>
-          <div class="metric-card">
-            <h4>Active Models</h4>
-            <p class="metric-value">{{ active_models | default('2') }}</p>
-          </div>
+          {% endif %}
         </div>
 
-        <!-- Processing Logs -->
-        <h3><i class="fas fa-list-alt"></i> Processing Logs</h3>
-        {% if logs %}
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Dataset</th>
-                  <th>Reviews Count</th>
-                  <th>Processing Time</th>
-                  <th>Status</th>
-                  <th>Message</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for log in logs %}
-                <tr>
-                  <td>{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
-                  <td>{{ log.dataset_name or '-' }}</td>
-                  <td>{{ log.reviews_count or '-' }}</td>
-                  <td>{{ log.processing_time or '-' }}s</td>
-                  <td>
-                    <span class="sentiment {% if log.status == 'success' %}positive{% elif log.status == 'error' %}negative{% else %}neutral{% endif %}">
-                      {{ log.status }}
-                    </span>
-                  </td>
-                  <td>{{ log.message or '' }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <div class="no-reviews">
-            <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
-            <p>No logs available.</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-
+        
+        
     <!-- Reports Section -->
     <div id="reports" class="section">
       <div class="card">

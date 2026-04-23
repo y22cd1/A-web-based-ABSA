@@ -19,6 +19,20 @@
             <li>{{ aspect }}: <span class="positive">+{{ counts.positive }}</span> | <span class="negative">-{{ counts.negative }}</span> | <span class="neutral">~{{ counts.neutral }}</span></li>
             {% endfor %}
         </ul>
+        
         {% endif %}
+        <h2>Model Evaluation Metrics</h2>
+
+{% if metrics %}
+<ul>
+    <li>Accuracy: {{ metrics.accuracy }}</li>
+    <li>Precision: {{ metrics.precision }}</li>
+    <li>Recall: {{ metrics.recall }}</li>
+    <li>F1 Score: {{ metrics.f1_score }}</li>
+</ul>
+{% else %}
+<p>No evaluation data available.</p>
+{% endif %}
+
     </div>
 </div>
